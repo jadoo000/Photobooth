@@ -1,81 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oceanic Photobooth</title>
-<style>
-  body { background: linear-gradient(to bottom,#e0f7fa,#fff); font-family:'Georgia',serif; text-align:center; margin:0; }
-  header { background:#006699; color:#fff; padding:1.5em; font-size:2em; letter-spacing:2px; animation: float 4s infinite alternate; }
-  @keyframes float { from { transform:translateY(0);} to { transform:translateY(10px);} }
-  #camera,#output { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; }
-  #camera { transform:scaleX(-1); }
-  button,select { background:#006699; color:#fff; border:none; padding:12px 24px; margin:8px; cursor:pointer; border-radius:8px; font-size:16px; transition:transform 0.3s, background 0.3s; }
-  button:hover,select:hover { background:#004466; transform:scale(1.1); }
-  #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; animation: fadeIn 1s; }
-  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-  #stripArea canvas { margin-top:20px; animation: slideDown 1s ease-out; }
-  @keyframes slideDown { from { transform:translateY(-50px); opacity:0;} to { transform:translateY(0); opacity:1;} }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oceanic Photobooth</title>
+  <style>
+    body { background: linear-gradient(to bottom,#e0f7fa,#fff); font-family:'Georgia',serif; text-align:center; }
+    header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
+    .polaroid-preview {
+      margin:20px auto; border:8px solid #fff; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+      width:300px; height:500px; display:flex; flex-direction:column; justify-content:space-around; align-items:center;
+    }
+    .slot { width:260px; height:140px; border:2px dashed #ccc; margin:10px; }
+    button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:20px; cursor:pointer; border-radius:8px; font-size:16px; }
+    button:hover { background:#004466; }
+  </style>
 </head>
 <body>
-<header>🐬 Oceanic Photobooth</header>
+  <header>🐬 Oceanic Photobooth</header>
+  <h2>Your Polaroid Layout</h2>
+  <div class="polaroid-preview">
+    <div class="slot">Top</div>
+    <div class="slot">Middle</div>
+    <div class="slot">Bottom</div>
+  </div>
+  <button onclick="start()">Start Photobooth</button>
 
-<video id="camera" width="400" height="300" autoplay></video><br>
-<select id="layoutSelect">
-  <option value="single">Single</option>
-  <option value="2">2-Cut</option>
-  <option value="4">4-Cut</option>
-  <option value="grid">Grid</option>
-</select>
-<button onclick="countdownCapture()">📸 Capture</button>
-<button onclick="downloadPhoto()">⬇️ Download</button>
-<button onclick="applyFilter('grayscale')">Grayscale</button>
-<button onclick="applyFilter('sepia')">Sepia</button>
-<button onclick="applyFilter('invert')">Invert</button>
-
-<div id="countdown"></div>
-<canvas id="output" width="400" height="300"></canvas>
-<div id="stripArea"></div>
-
-<footer>© 2026 Oceanic Photobooth</footer>
-
-<script>
-const video=document.getElementById('camera'),canvas=document.getElementById('output'),ctx=canvas.getContext('2d');
-navigator.mediaDevices.getUserMedia({video:true}).then(s=>video.srcObject=s);
-
-function countdownCapture(){
-  let c=3;const cd=document.getElementById('countdown');cd.innerText=c;
-  const i=setInterval(()=>{c--;cd.innerText=c>0?c:'';if(c===0){takePhoto();makeLayout();clearInterval(i)}},1000);
-}
-function takePhoto(){ctx.drawImage(video,0,0,canvas.width,canvas.height);}
-function downloadPhoto(){const l=document.createElement('a');l.download='photobooth.png';l.href=canvas.toDataURL();l.click();}
-function applyFilter(t){
-  const d=ctx.getImageData(0,0,canvas.width,canvas.height),data=d.data;
-  for(let i=0;i<data.length;i+=4){let r=data[i],g=data[i+1],b=data[i+2];
-    if(t==='grayscale'){let avg=(r+g+b)/3;data[i]=data[i+1]=data[i+2]=avg;}
-    else if(t==='sepia'){data[i]=r*.393+g*.769+b*.189;data[i+1]=r*.349+g*.686+b*.168;data[i+2]=r*.272+g*.534+b*.131;}
-    else if(t==='invert'){data[i]=255-r;data[i+1]=255-g;data[i+2]=255-b;}
-  }
-  ctx.putImageData(d,0,0);
-}
-function makeLayout(){
-  const choice=document.getElementById('layoutSelect').value,area=document.getElementById('stripArea');area.innerHTML='';
-  if(choice==='single'){area.appendChild(canvas.cloneNode(true));}
-  else if(choice==='2'||choice==='4'){
-    const cuts=parseInt(choice),strip=document.createElement('canvas');strip.width=canvas.width;strip.height=canvas.height*cuts;
-    const sctx=strip.getContext('2d');for(let i=0;i<cuts;i++)sctx.drawImage(canvas,0,i*canvas.height,canvas.width,canvas.height);
-    area.appendChild(strip);
-  } else if(choice==='grid'){
-    const grid=document.createElement('canvas');grid.width=canvas.width*2;grid.height=canvas.height*2;
-    const gctx=grid.getContext('2d');
-    gctx.drawImage(canvas,0,0,canvas.width,canvas.height);
-    gctx.drawImage(canvas,canvas.width,0,canvas.width,canvas.height);
-    gctx.drawImage(canvas,0,canvas.height,canvas.width,canvas.height);
-    gctx.drawImage(canvas,canvas.width,canvas.height,canvas.width,canvas.height);
-    area.appendChild(grid);
-  }
-}
-</script>
+  <script>
+    function start(){
+      localStorage.setItem('chosenLayout','3'); // fixed 3-cut strip
+      window.location.href="capture.html";
+    }
+  </script>
 </body>
 </html>
