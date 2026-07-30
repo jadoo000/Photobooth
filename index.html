@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oceanic Photobooth</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f8ff; text-align: center; }
+    header { background: #006699; color: white; padding: 1.5em; }
+    #camera, #output { margin: 20px auto; border: 4px solid #99ccff; border-radius: 12px; }
+    button { background: #006699; color: white; border: none; padding: 12px 24px; margin: 10px; cursor: pointer; border-radius: 8px; }
+    button:hover { background: #004466; }
+    footer { margin-top: 30px; font-size: 0.9em; color: #555; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌊 Oceanic Photobooth</h1>
+    <p>Capture the sea of memories!</p>
+  </header>
+
+  <video id="camera" width="400" height="300" autoplay></video>
+  <br>
+  <button onclick="takePhoto()">📸 Take Photo</button>
+  <canvas id="output" width="400" height="300"></canvas>
+
+  <footer>
+    <p>© 2026 Oceanic Photobooth Website</p>
+  </footer>
+
+  <script>
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('output');
+    const context = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => { alert("Camera access denied: " + err); });
+
+    function takePhoto() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>
