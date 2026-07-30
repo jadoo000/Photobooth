@@ -1,51 +1,379 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Oceanic Photobooth</title>
+
 <style>
-  body {
-    margin:0;
-    font-family:'Georgia',serif;
-    text-align:center;
-    /* Background options */
-    background: linear-gradient(to bottom, #004466, #0099cc); /* ocean gradient */
-    background-attachment: fixed;
-    /* If you want an image background, upload background.jpg and use: */
-    /* background:url('background.jpg') no-repeat center/cover; */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  color: #123f69;
+
+  /* Santorini background */
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,0.18),
+      rgba(255,255,255,0.18)
+    ),
+    url('santorini-bg.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* Top blue line */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: #145a91;
+  z-index: 20;
+}
+
+/* Main content card */
+.main-container {
+  width: min(92%, 700px);
+  margin: 55px auto 80px;
+  padding: 40px 30px 50px;
+
+  background: rgba(255, 253, 246, 0.94);
+
+  border: 3px solid #ffffff;
+  border-radius: 12px;
+
+  box-shadow:
+    0 15px 40px rgba(10, 55, 85, 0.25);
+}
+
+/* Header */
+.logo {
+  display: inline-block;
+  padding: 15px 35px;
+
+  border: 2px solid #1d5f96;
+  border-radius: 8px;
+
+  background: #fffdf6;
+
+  color: #145a91;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.3rem, 7vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 3px;
+
+  box-shadow:
+    0 5px 12px rgba(20, 90, 145, 0.15);
+}
+
+.logo-subtitle {
+  margin-top: -5px;
+
+  color: #1d5f96;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-style: italic;
+}
+
+/* Decorative wave */
+.decorative-line {
+  width: 180px;
+  height: 25px;
+  margin: 15px auto;
+
+  background-image: url('wave-decoration.png');
+  background-size: 180px auto;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Main title */
+h1 {
+  margin: 25px 0 5px;
+
+  color: #145a91;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.description {
+  margin: 0 auto 30px;
+
+  color: #647b8c;
+
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Preview */
+.preview {
+  position: relative;
+
+  width: 320px;
+  height: 500px;
+
+  margin: 30px auto 20px;
+
+  background: white;
+
+  border: 5px solid white;
+
+  box-shadow:
+    0 12px 30px rgba(10, 55, 85, 0.25);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.preview:hover {
+  transform: translateY(-10px) rotate(-1deg);
+
+  box-shadow:
+    0 20px 40px rgba(10, 55, 85, 0.32);
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* Decorative stars */
+.preview::before {
+  content: "✦";
+
+  position: absolute;
+
+  top: -25px;
+  left: -25px;
+
+  color: #e3a928;
+
+  font-size: 32px;
+
+  z-index: 5;
+}
+
+.preview::after {
+  content: "✦";
+
+  position: absolute;
+
+  bottom: -25px;
+  right: -25px;
+
+  color: #e3a928;
+
+  font-size: 32px;
+
+  z-index: 5;
+}
+
+/* Layout label */
+.label {
+  margin: 20px 0;
+
+  color: #145a91;
+
+  font-family: 'Cormorant Garamond', serif;
+
+  font-size: 1.8rem;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+/* Start button */
+.start-button {
+  display: inline-block;
+
+  padding: 14px 55px;
+
+  border: none;
+  border-radius: 30px;
+
+  background: #145a91;
+
+  color: white;
+
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 15px rgba(20, 90, 145, 0.25);
+
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.start-button:hover {
+  background: #0d456f;
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 20px rgba(20, 90, 145, 0.35);
+}
+
+/* Bottom wave */
+.bottom-wave {
+  position: fixed;
+
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 70px;
+
+  background-image: url('wave-decoration.png');
+
+  background-size: auto 70px;
+  background-position: center bottom;
+  background-repeat: repeat-x;
+
+  pointer-events: none;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+  .main-container {
+    padding: 30px 15px 45px;
+    margin-top: 35px;
   }
-  header {
-    background:rgba(0,0,0,0.5);
-    color:#fff;
-    padding:1.5em;
-    font-size:2em;
+
+  .logo {
+    padding: 12px 20px;
+    letter-spacing: 2px;
   }
-  h2 { margin-top:20px; color:#fff; }
+
+  .logo-subtitle {
+    font-size: 1.5rem;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+  }
+
   .preview {
-    margin:30px auto; width:320px; height:500px;
-    border:10px solid #fff; background:#fff;
-    box-shadow:0 6px 12px rgba(0,0,0,0.3);
-    cursor:pointer; transition:transform 0.3s, box-shadow 0.3s;
+    width: 280px;
+    height: 440px;
   }
-  .preview:hover { transform:scale(1.05) rotate(-2deg); box-shadow:0 10px 20px rgba(0,0,0,0.4); }
-  img { width:100%; height:100%; object-fit:cover; }
-  .label { margin-top:10px; font-weight:bold; color:#fff; }
+
+  .start-button {
+    padding: 13px 45px;
+  }
+}
 </style>
+
 </head>
+
 <body>
-<header>🐬 Oceanic Photobooth</header>
-<h2>Pick your look</h2>
-<div class="preview" onclick="start()">
-  <img src="polaroid.png" alt="3-Cut Polaroid">
+
+<div class="main-container">
+
+  <div class="logo">
+    OCEANIC
+  </div>
+
+  <div class="logo-subtitle">
+    Photobooth
+  </div>
+
+  <div class="decorative-line"></div>
+
+  <h1>Pick Your Look</h1>
+
+  <p class="description">
+    Capture your memories by the sea.
+    <br>
+    A little piece of Santorini, saved forever.
+  </p>
+
+  <div
+    class="preview"
+    onclick="startPhotobooth()"
+    title="Choose 3-Cut Strip"
+  >
+    <img
+      src="polaroid.png"
+      alt="Santorini 3-Cut Polaroid"
+    >
+  </div>
+
+  <div class="label">
+    ☼ 3-Cut Strip ☼
+  </div>
+
+<button
+class="start-button"
+onclick="startPhotobooth()"
+
+>
+
+```
+START
+```
+
+  </button>
+
 </div>
-<div class="label">3-Cut Strip</div>
+
+<div class="bottom-wave"></div>
 
 <script>
-  function start(){
-    localStorage.setItem('chosenLayout','3');
-    window.location.href="capture.html";
-  }
+
+function startPhotobooth() {
+
+  /* Save selected layout */
+  localStorage.setItem(
+    'chosenLayout',
+    '3'
+  );
+
+  /* Go to camera page */
+  window.location.href =
+    'capture.html';
+
+}
+
 </script>
+
 </body>
 </html>
