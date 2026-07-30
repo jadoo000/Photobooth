@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture Your Polaroid</title>
+  <style>
+    body { background: linear-gradient(to bottom,#e0f7fa,#fff); font-family:'Georgia',serif; text-align:center; }
+    header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
+    #camera,#output { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; }
+    #camera { transform:scaleX(-1); }
+    button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; }
+    button:hover { background:#004466; }
+    #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; }
+    #stripArea canvas { margin-top:20px; border:8px solid #fff; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body>
+  <header>📸 Capture Your Polaroid</header>
+  <video id="camera" width="400" height="300" autoplay></video>
+  <br>
+  <button onclick="startCapture()">Start Capture</button>
+  <div id="countdown"></div>
+  <canvas id="output" width="400" height="300"></canvas>
+  <div id="stripArea"></div>
+
+  <script>
+    const video=document.getElementById('camera');
+    const canvas=document.getElementById('output');
+    const ctx=canvas.getContext('2d');
+    let currentShot=0;
+
+    navigator.mediaDevices.getUserMedia({video:true}).then(s=>video.srcObject=s);
+
+    function startCapture(){
+      currentShot=0;
+      captureNext();
+    }
+
+    function captureNext(){
+      let count=3;
+      const cd=document.getElementById('countdown');
+      cd.innerText=count;
+      const interval=setInterval(()=>{
+        count--;
+        cd.innerText=count>0?count:'';
+        if(count===0){
+          ctx.drawImage(video,0,0,canvas.width,canvas.height);
+          saveShot();
+          clearInterval(interval);
+        }
+      },1000);
+    }
+
+    function saveShot(){
+      const area=document.getElementById('stripArea');
+      if(currentShot===0){ area.innerHTML=''; }
+      const cuts=3;
+      if(!area.querySelector('canvas')){
+        const strip=document.createElement('canvas');
+        strip.width=canvas.width;
+        strip.height=canvas.height*cuts;
+        area.appendChild(strip);
+      }
+      const strip=area.querySelector(' const strip=area.querySelector('canvas');
+      const sctx=strip.getContext('2d');
+      sctx.drawImage(canvas,0,currentShot*canvas.height,canvas.width,canvas.height);
+      currentShot++;
+      if(currentShot<cuts){ setTimeout(captureNext,1000); }
+    }
+  </script>
+</body>
+</html>
