@@ -12,7 +12,14 @@
     button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; }
     button:hover { background:#004466; }
     #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; }
-    #stripArea canvas { margin-top:20px; border:8px solid #fff; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
+    .polaroid {
+      margin:20px auto; width:320px; height:500px;
+      border:10px solid #fff; background:#fff;
+      box-shadow:0 4px 10px rgba(0,0,0,0.3);
+      display:flex; flex-direction:column; justify-content:space-around; align-items:center;
+    }
+    .slot { width:260px; height:140px; border:2px dashed #ccc; margin:10px; }
+    canvas { width:260px; height:140px; }
   </style>
 </head>
 <body>
@@ -21,12 +28,18 @@
   <br>
   <button onclick="startCapture()">Start Capture</button>
   <div id="countdown"></div>
-  <canvas id="output" width="400" height="300"></canvas>
-  <div id="stripArea"></div>
+
+  <!-- Polaroid frame with slots -->
+  <div class="polaroid" id="stripArea">
+    <div class="slot" id="slot0"></div>
+    <div class="slot" id="slot1"></div>
+    <div class="slot" id="slot2"></div>
+  </div>
 
   <script>
     const video=document.getElementById('camera');
-    const canvas=document.getElementById('output');
+    const canvas=document.createElement('canvas');
+    canvas.width=400; canvas.height=300;
     const ctx=canvas.getContext('2d');
     let currentShot=0;
 
@@ -53,20 +66,14 @@
     }
 
     function saveShot(){
-      const area=document.getElementById('stripArea');
-      if(currentShot===0){ area.innerHTML=''; }
-      const cuts=3;
-      if(!area.querySelector('canvas')){
-        const strip=document.createElement('canvas');
-        strip.width=canvas.width;
-        strip.height=canvas.height*cuts;
-        area.appendChild(strip);
-      }
-      const strip=area.querySelector(' const strip=area.querySelector('canvas');
-      const sctx=strip.getContext('2d');
-      sctx.drawImage(canvas,0,currentShot*canvas.height,canvas.width,canvas.height);
+      const shotCanvas=document.createElement('canvas');
+      shotCanvas.width=260; shotCanvas.height=140;
+      const shotCtx=shotCanvas.getContext('2d');
+      shotCtx.drawImage(canvas,0,0,shotCanvas.width,shotCanvas.height);
+      document.getElementById('slot'+currentShot).innerHTML='';
+      document.getElementById('slot'+currentShot).appendChild(shotCanvas);
       currentShot++;
-      if(currentShot<cuts){ setTimeout(captureNext,1000); }
+      if(currentShot<3){ setTimeout(captureNext,1000); }
     }
   </script>
 </body>
