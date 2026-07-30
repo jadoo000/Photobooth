@@ -1,37 +1,208 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Oceanic Photobooth</title>
+
 <style>
-  body { background:#f9f9f9; font-family:'Georgia',serif; text-align:center; margin:0; }
-  header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
-  h2 { margin-top:20px; }
-  .preview {
-    margin:30px auto; width:320px; height:500px;
-    border:10px solid #fff; background:#fff;
-    box-shadow:0 6px 12px rgba(0,0,0,0.3);
-    cursor:pointer; transition:transform 0.3s, box-shadow 0.3s;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #fdfbf5;
+  color: #123b5d;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+/* Decorative Mediterranean wave */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 9px;
+  background: #176b9c;
+  z-index: 10;
+}
+
+header {
+  background: #176b9c;
+  color: white;
+  padding: 35px 20px 40px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(23, 107, 156, 0.2);
+}
+
+.subtitle {
+  margin-top: 40px;
+  color: #1b5f89;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.description {
+  color: #6b7f8e;
+  font-size: 0.95rem;
+  margin: 8px 20px 30px;
+  letter-spacing: 0.5px;
+}
+
+/* Decorative sun */
+.sun {
+  position: absolute;
+  top: 125px;
+  right: 8%;
+  width: 70px;
+  height: 70px;
+  background: #f4c95d;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+/* Photobooth preview */
+.preview {
+  position: relative;
+  margin: 30px auto 20px;
+  width: 320px;
+  height: 500px;
+  padding: 10px;
+  background: white;
+  border: 2px solid #d8e8ef;
+  box-shadow:
+    0 12px 25px rgba(30, 80, 110, 0.15),
+    0 3px 6px rgba(30, 80, 110, 0.08);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.preview::before {
+  content: "✦";
+  position: absolute;
+  top: -22px;
+  left: -18px;
+  color: #f4c95d;
+  font-size: 30px;
+  z-index: 2;
+}
+
+.preview::after {
+  content: "✦";
+  position: absolute;
+  bottom: -20px;
+  right: -18px;
+  color: #176b9c;
+  font-size: 28px;
+  z-index: 2;
+}
+
+.preview:hover {
+  transform: translateY(-8px) rotate(-1deg);
+  box-shadow:
+    0 20px 35px rgba(30, 80, 110, 0.2),
+    0 5px 10px rgba(30, 80, 110, 0.1);
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.label {
+  margin: 15px auto 40px;
+  color: #176b9c;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Button-like label */
+.label::after {
+  content: "  →";
+  color: #d59b2a;
+}
+
+/* Bottom wave */
+.wave {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  background: #dceff4;
+  border-radius: 50% 50% 0 0;
+  z-index: -1;
+}
+
+@media (max-width: 600px) {
+
+  header {
+    font-size: 2.3rem;
+    padding: 30px 15px 35px;
   }
-  .preview:hover { transform:scale(1.05) rotate(-2deg); box-shadow:0 10px 20px rgba(0,0,0,0.4); }
-  img { width:100%; height:100%; object-fit:cover; }
-  .label { margin-top:10px; font-weight:bold; color:#006699; }
+
+  .subtitle {
+    font-size: 1.9rem;
+  }
+
+  .preview {
+    width: 280px;
+    height: 440px;
+  }
+
+  .sun {
+    width: 50px;
+    height: 50px;
+    top: 120px;
+    right: 5%;
+  }
+}
 </style>
+
 </head>
+
 <body>
-<header>🐬 Oceanic Photobooth</header>
-<h2>Pick your look</h2>
+
+<header>☼ Oceanic Photobooth</header>
+
+<div class="sun"></div>
+
+<h2 class="subtitle">Pick Your Look</h2>
+
+<p class="description">
+Capture a little piece of the Mediterranean with every smile.
+</p>
+
 <div class="preview" onclick="start()">
   <img src="polaroid.png" alt="3-Cut Polaroid">
 </div>
+
 <div class="label">3-Cut Strip</div>
 
+<div class="wave"></div>
+
 <script>
-  function start(){
-    localStorage.setItem('chosenLayout','3');
-    window.location.href="capture.html";
-  }
+function start() {
+  localStorage.setItem('chosenLayout', '3');
+  window.location.href = "capture.html";
+}
 </script>
+
 </body>
 </html>
