@@ -7,24 +7,23 @@
   <style>
     body { background: linear-gradient(to bottom,#e0f7fa,#fff); font-family:'Georgia',serif; text-align:center; }
     header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
-    .polaroid-preview {
-      margin:20px auto; border:8px solid #fff; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.3);
-      width:300px; height:500px; display:flex; flex-direction:column; justify-content:space-around; align-items:center;
+    .polaroid {
+      margin:20px auto; width:320px; height:500px;
+      border:10px solid #fff; background:#fff;
+      box-shadow:0 4px 10px rgba(0,0,0,0.3);
+      cursor:pointer; transition:transform 0.3s;
     }
-    .slot { width:260px; height:140px; border:2px dashed #ccc; margin:10px; }
-    button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:20px; cursor:pointer; border-radius:8px; font-size:16px; }
-    button:hover { background:#004466; }
+    .polaroid:hover { transform:scale(1.05); }
+    img { width:100%; height:100%; object-fit:cover; }
   </style>
 </head>
 <body>
   <header>🐬 Oceanic Photobooth</header>
-  <h2>Your Polaroid Layout</h2>
-  <div class="polaroid-preview">
-    <div class="slot">Top</div>
-    <div class="slot">Middle</div>
-    <div class="slot">Bottom</div>
+  <h2>Click the Polaroid to Start</h2>
+  <div class="polaroid" onclick="start()">
+    <!-- Replace with your uploaded design file path -->
+    <img src="your-polaroid-design.jpg" alt="Polaroid Design">
   </div>
-  <button onclick="start()">Start Photobooth</button>
 
   <script>
     function start(){
