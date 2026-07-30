@@ -1,100 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capture Your Polaroid</title>
-  <style>
-    body { background: linear-gradient(to bottom,#e0f7fa,#fff); font-family:'Georgia',serif; text-align:center; margin:0; }
-    header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
-    #camera { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; transform:scaleX(-1); }
-    button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; transition:0.3s; }
-    button:hover { background:#004466; transform:scale(1.1); }
-    #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; animation:pulse 1s infinite; }
-    @keyframes pulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}100%{transform:scale(1);opacity:1;} }
-    .polaroid {
-      margin:20px auto; width:320px; height:500px;
-      border:10px solid #fff; background:#fff url('polaroid.png') no-repeat center/cover;
-      box-shadow:0 6px 12px rgba(0,0,0,0.3);
-      display:flex; flex-direction:column; justify-content:space-around; align-items:center;
-    }
-    .slot { width:260px; height:140px; border:2px dashed #ccc; margin:10px; }
-    .slot canvas { animation:slideIn 0.5s ease-out; }
-    @keyframes slideIn { from{transform:translateY(-20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capture Your Polaroid</title>
+<style>
+  body { background:#f9f9f9; font-family:'Georgia',serif; text-align:center; margin:0; }
+  header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
+  #camera { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; transform:scaleX(-1); }
+  button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; transition:0.3s; }
+  button:hover { background:#004466; transform:scale(1.1); }
+  #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}100%{transform:scale(1);opacity:1;} }
+  .polaroid {
+    margin:20px auto; width:320px; height:500px;
+    border:10px solid #fff; background:#fff url('polaroid.png') no-repeat center/cover;
+    box-shadow:0 6px 12px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; justify-content:space-around; align-items:center;
+    position:relative;
+  }
+  .slot { width:260px; height:140px; margin:10px; overflow:hidden; }
+  .slot canvas { animation:slideIn 0.5s ease-out; }
+  @keyframes slideIn { from{transform:translateY(-20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+</style>
 </head>
 <body>
-  <header>📸 Capture Your Polaroid</header>
-  <video id="camera" width="400" height="300" autoplay></video>
-  <br>
-  <button onclick="startCapture()">Start Capture</button>
-  <button onclick="downloadPolaroid()">⬇️ Download Polaroid</button>
-  <div id="countdown"></div>
+<header>📸 Capture Your Polaroid</header>
+<video id="camera" width="400" height="300" autoplay></video>
+<br>
+<button onclick="startCapture()">Start Capture</button>
+<button onclick="downloadPolaroid()">⬇️ Download Polaroid</button>
+<div id="countdown"></div>
 
-  <!-- Polaroid frame with slots -->
-  <div class="polaroid" id="stripArea">
-    <div class="slot" id="slot0"></div>
-    <div class="slot" id="slot1"></div>
-    <div class="slot" id="slot2"></div>
-  </div>
+<div class="polaroid" id="stripArea">
+  <div class="slot" id="slot0"></div>
+  <div class="slot" id="slot1"></div>
+  <div class="slot" id="slot2"></div>
+</div>
 
-  <script>
-    const video=document.getElementById('camera');
-    const canvas=document.createElement('canvas');
-    canvas.width=400; canvas.height=300;
-    const ctx=canvas.getContext('2d');
-    let currentShot=0;
+<script>
+const video=document.getElementById('camera');
+const canvas=document.createElement('canvas');
+canvas.width=400; canvas.height=300;
+const ctx=canvas.getContext('2d');
+let currentShot=0;
 
-    navigator.mediaDevices.getUserMedia({video:true}).then(s=>video.srcObject=s);
+navigator.mediaDevices.getUserMedia({video:true}).then(s=>video.srcObject=s);
 
-    function startCapture(){
-      currentShot=0;
-      captureNext();
+function startCapture(){
+  currentShot=0;
+  captureNext();
+}
+
+function captureNext(){
+  let count=3;
+  const cd=document.getElementById('countdown');
+  cd.innerText=count;
+  const interval=setInterval(()=>{
+    count--;
+    cd.innerText=count>0?count:'';
+    if(count===0){
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      saveShot();
+      clearInterval(interval);
     }
+  },1000);
+}
 
-    function captureNext(){
-      let count=3;
-      const cd=document.getElementById('countdown');
-      cd.innerText=count;
-      const interval=setInterval(()=>{
-        count--;
-        cd.innerText=count>0?count:'';
-        if(count===0){
-          ctx.drawImage(video,0,0,canvas.width,canvas.height);
-          saveShot();
-          clearInterval(interval);
-        }
-      },1000);
-    }
+function saveShot(){
+  const shotCanvas=document.createElement('canvas');
+  shotCanvas.width=260; shotCanvas.height=140;
+  const shotCtx=shotCanvas.getContext('2d');
+  // Fit image proportionally inside slot
+  shotCtx.drawImage(canvas,0,0,shotCanvas.width,shotCanvas.height);
+  document.getElementById('slot'+currentShot).innerHTML='';
+  document.getElementById('slot'+currentShot).appendChild(shotCanvas);
+  currentShot++;
+  if(currentShot<3){ setTimeout(captureNext,1000); }
+}
 
-    function saveShot(){
-      const shotCanvas=document.createElement('canvas');
-      shotCanvas.width=260; shotCanvas.height=140;
-      const shotCtx=shotCanvas.getContext('2d');
-      shotCtx.drawImage(canvas,0,0,shotCanvas.width,shotCanvas.height);
-      document.getElementById('slot'+currentShot).innerHTML='';
-      document.getElementById('slot'+currentShot).appendChild(shotCanvas);
-      currentShot++;
-      if(currentShot<3){ setTimeout(captureNext,1000); }
+function downloadPolaroid(){
+  const strip=document.createElement('canvas');
+  strip.width=320; strip.height=500;
+  const sctx=strip.getContext('2d');
+  // White background
+  sctx.fillStyle="#fff"; sctx.fillRect(0,0,strip.width,strip.height);
+  // Draw background design
+  const bg=new Image();
+  bg.src='polaroid.png';
+  bg.onload=function(){
+    sctx.drawImage(bg,0,0,strip.width,strip.height);
+    // Copy each slot
+    for(let i=0;i<3;i++){
+      const slot=document.getElementById('slot'+i).querySelector('canvas');
+      if(slot){ sctx.drawImage(slot,30,30+i*160,260,140); }
     }
-
-    function downloadPolaroid(){
-      const strip=document.createElement('canvas');
-      strip.width=320; strip.height=500;
-      const sctx=strip.getContext('2d');
-      // White background Polaroid frame
-      sctx.fillStyle="#fff";
-      sctx.fillRect(0,0,strip.width,strip.height);
-      // Copy each slot
-      for(let i=0;i<3;i++){
-        const slot=document.getElementById('slot'+i).querySelector('canvas');
-        if(slot){ sctx.drawImage(slot,30,30+i*160,260,140); }
-      }
-      const link=document.createElement('a');
-      link.download='polaroid.png';
-      link.href=strip.toDataURL();
-      link.click();
-    }
-  </script>
+    const link=document.createElement('a');
+    link.download='polaroid.png';
+    link.href=strip.toDataURL();
+    link.click();
+  }
+}
+</script>
 </body>
 </html>
