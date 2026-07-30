@@ -10,16 +10,34 @@
       font-family: 'Georgia', serif;
       text-align: center;
     }
-    header { background: #006699; color: white; padding: 1.5em; }
-    #camera, #output { margin: 20px auto; border: 4px solid #99ccff; border-radius: 12px; }
+    header {
+      background: #006699;
+      color: white;
+      padding: 1.5em;
+      font-size: 1.5em;
+      letter-spacing: 2px;
+    }
+    #camera, #output {
+      margin: 20px auto;
+      border: 4px solid #99ccff;
+      border-radius: 12px;
+      display: block;
+    }
     #camera { transform: scaleX(-1); } /* Fix inverted camera */
     button {
-      background: #006699; color: white; border: none;
-      padding: 12px 24px; margin: 10px; cursor: pointer;
-      border-radius: 8px; font-size: 16px;
+      background: #006699;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
     }
     button:hover { background: #004466; }
     footer { margin-top: 30px; font-size: 0.9em; color: #555; }
+    #stripArea { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -39,6 +57,7 @@
   <button onclick="makeStrip(4)">4-Cut Strip</button>
 
   <canvas id="output" width="400" height="300"></canvas>
+  <div id="stripArea"></div>
 
   <footer>
     <p>© 2026 Oceanic Photobooth Website</p>
@@ -96,6 +115,11 @@
         stripCtx.drawImage(canvas, 0, i*canvas.height, canvas.width, canvas.height);
       }
 
+      // Show strip on page
+      document.getElementById('stripArea').innerHTML = '';
+      document.getElementById('stripArea').appendChild(strip);
+
+      // Download strip
       const link = document.createElement('a');
       link.download = `photobooth_strip_${cuts}.png`;
       link.href = strip.toDataURL();
