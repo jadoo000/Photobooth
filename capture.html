@@ -5,30 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capture Your Polaroid</title>
 <style>
-  body { background:#f9f9f9; font-family:'Georgia',serif; text-align:center; margin:0; }
-  header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
-  #camera { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; transform:scaleX(-1); }
-  button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; transition:0.3s; }
-  button:hover { background:#004466; transform:scale(1.1); }
-  #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; animation:pulse 1s infinite; }
-  @keyframes pulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}100%{transform:scale(1);opacity:1;} }
-  .polaroid {
-    margin:20px auto; width:320px; height:500px;
-    border:10px solid #fff; background:#fff url('polaroid.png') no-repeat center/cover;
-    box-shadow:0 6px 12px rgba(0,0,0,0.3);
-    display:flex; flex-direction:column; justify-content:space-around; align-items:center;
-    position:relative;
-  }
-  .slot { width:260px; height:140px; margin:10px; overflow:hidden; }
-  .slot canvas { animation:slideIn 0.5s ease-out; }
-  @keyframes slideIn { from{transform:translateY(-20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-  /* Printer animation */
-  #printer.printing { animation:printAnim 5s forwards; }
-  @keyframes printAnim {
-    0% { transform:translateY(-100%); opacity:0; }
-    50% { transform:translateY(0); opacity:1; }
-    100% { transform:translateY(0); opacity:1; }
-  }
+  body { background:#f9f9f9; font-family:'Georgia',serif; text-align:center; margin:0; }
+  header { background:#006699; color:#fff; padding:1.5em; font-size:2em; }
+  #camera { margin:20px auto; border:4px solid #99ccff; border-radius:12px; display:block; transform:scaleX(-1); }
+  button { background:#006699; color:#fff; border:none; padding:12px 24px; margin:10px; cursor:pointer; border-radius:8px; font-size:16px; transition:0.3s; }
+  button:hover { background:#004466; transform:scale(1.1); }
+  #countdown { font-size:3em; color:#006699; margin:10px; font-weight:bold; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}100%{transform:scale(1);opacity:1;} }
+  .polaroid {
+    margin:20px auto; width:320px; height:500px;
+    border:10px solid #fff; background:#fff url('polaroid.png') no-repeat center/cover;
+    box-shadow:0 6px 12px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; justify-content:space-around; align-items:center;
+  }
+  .slot { width:260px; height:140px; margin:10px; overflow:hidden; }
+  .slot canvas { animation:slideIn 0.5s ease-out; }
+  @keyframes slideIn { from{transform:translateY(-20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+  /* Printer animation */
+  #printer.printing { animation:printAnim 5s forwards; }
+  @keyframes printAnim {
+    0% { transform:translateY(-100%); opacity:0; }
+    50% { transform:translateY(0); opacity:1; }
+    100% { transform:translateY(0); opacity:1; }
+  }
 </style>
 </head>
 <body>
@@ -42,20 +41,20 @@
 
 <!-- Polaroid frame with slots -->
 <div class="polaroid" id="stripArea">
-  <div class="slot" id="slot0"></div>
-  <div class="slot" id="slot1"></div>
-  <div class="slot" id="slot2"></div>
+  <div class="slot" id="slot0"></div>
+  <div class="slot" id="slot1"></div>
+  <div class="slot" id="slot2"></div>
 </div>
 
 <!-- Printer section -->
 <div id="printSection" style="display:none;">
-  <div id="printer" class="printer">
-    <img id="printedPhoto" src="" alt="Printing..." />
-  </div>
-  <p id="printingMessage"></p>
-  <img id="printedImage" alt="Final Polaroid" />
-  <button id="saveButton" style="display:none;" onclick="downloadPolaroid()">Save</button>
-  <p id="successMessage" style="display:none;">✨ Your photo is ready!</p>
+  <div id="printer" class="printer">
+    <img id="printedPhoto" src="" alt="Printing..." />
+  </div>
+  <p id="printingMessage"></p>
+  <img id="printedImage" alt="Final Polaroid" />
+  <button id="saveButton" style="display:none;" onclick="downloadPolaroid()">Save</button>
+  <p id="successMessage" style="display:none;">✨ Your photo is ready!</p>
 </div>
 
 <script>
@@ -68,34 +67,87 @@ let currentShot=0;
 navigator.mediaDevices.getUserMedia({video:true}).then(s=>video.srcObject=s);
 
 function startCapture(){
-  currentShot=0;
-  captureNext();
+  currentShot=0;
+  captureNext();
 }
 
 function captureNext(){
-  let count=3;
-  const cd=document.getElementById('countdown');
-  cd.innerText=count;
-  const interval=setInterval(()=>{
-    count--;
-    cd.innerText=count>0?count:'';
-    if(count===0){
-      ctx.drawImage(video,0,0,canvas.width,canvas.height);
-      saveShot();
-      clearInterval(interval);
-    }
-  },1000);
+  let count=3;
+  const cd=document.getElementById('countdown');
+  cd.innerText=count;
+  const interval=setInterval(()=>{
+    count--;
+    cd.innerText=count>0?count:'';
+    if(count===0){
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      saveShot();
+      clearInterval(interval);
+    }
+  },1000);
 }
 
 function saveShot(){
-  const shotCanvas=document.createElement('canvas');
-  shotCanvas.width=260; shotCanvas.height=140;
-  const shotCtx=shotCanvas.getContext('2d');
-  shotCtx.drawImage(canvas,0,0,shotCanvas.width,shotCanvas.height);
-  document.getElementById('slot'+currentShot).innerHTML='';
-  document.getElementById('slot'+currentShot).appendChild(shotCanvas);
-  currentShot++;
-  if(currentShot<3){ setTimeout(captureNext,1000); }
+  const shotCanvas=document.createElement('canvas');
+  shotCanvas.width=260; shotCanvas.height=140;
+  const shotCtx=shotCanvas.getContext('2d');
+  shotCtx.drawImage(canvas,0,0,shotCanvas.width,shotCanvas.height);
+  document.getElementById('slot'+currentShot).innerHTML='';
+  document.getElementById('slot'+currentShot).appendChild(shotCanvas);
+  currentShot++;
+  if(currentShot<3){ setTimeout(captureNext,1000); }
 }
 
 function printPolaroid(){
+  const printSection=document.getElementById('printSection');
+  printSection.style.display='block';
+  createFinalImage();
+  const printer=document.getElementById('printer');
+  const printedPhoto=document.getElementById('printedPhoto');
+  printer.classList.remove('printing');
+  printedPhoto.style.opacity='0';
+  void printer.offsetWidth; // restart animation
+  printer.classList.add('printing');
+  const message=document.getElementById('printingMessage');
+  message.innerText='🖨️ Printing your memory...';
+  setTimeout(function(){
+    message.innerText='✨ Your photo is ready!';
+    document.getElementById('saveButton').style.display='inline-block';
+    document.getElementById('successMessage').style.display='block';
+  },5200);
+}
+
+function createFinalImage(){
+  const strip=document.createElement('canvas');
+  strip.width=320; strip.height=500;
+  const sctx=strip.getContext('2d');
+  const background=new Image();
+  background.src='polaroid.png';
+  background.onload=function(){
+    sctx.drawImage(background,0,0,320,500);
+    for(let i=0;i<3;i++){
+      const slot=document.getElementById('slot'+i).querySelector('canvas');
+      if(slot){ sctx.drawImage(slot,30,30+(i*150),260,140); }
+    }
+    const finalImage=document.getElementById('printedImage');
+    finalImage.src=strip.toDataURL('image/png');
+    window.finalPhoto=strip;
+  };
+}
+
+function downloadPolaroid(){
+  if(!window.finalPhoto){
+    alert('Please print your photo first.');
+    return;
+  }
+  const link=document.createElement('a');
+  link.download='oceanic-polaroid.png';
+  link.href=window.finalPhoto.toDataURL('image/png');
+  link.click();
+}
+
+function goHome(){
+  window.location.href='index.html';
+}
+</script>
+</body>
+</html>
